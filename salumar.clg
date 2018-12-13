@@ -1,0 +1,477 @@
+algoritmo projeto_salumar;
+// Síntese
+//  Objetivo: Um programa que pertima o controle de venda das passagens áereas de uma empresa. Deve ter a Oção de verificar a ocupação de um voo, reserver,cancelar e confirmar a compra de uma passagem,além da opção de mostrar a situação dos assentos de cada voo.
+//  Entrada : Deve ser inserido um destino, quantidade de assentos no voo, e preço da passagem para o respectivo destino. O usuário deve inserir quantas passagens deseja e idade dos passageiros.
+//  Saída   : Como saída deve ter a opção de verificação da ocupação de cada voo e os assentos,além do  valor total a ser pago pelas passagens;
+//  Aluno   :Rangel Cardoso Dias;     Matrícula: uc18200693;
+
+
+principal
+	// Declarações
+
+	caracter deseja,comando,assentos[200];
+	inteiro i, qtdPassageiros,contafacar,lugares,qtdCliente,idades[200], codReserva[200],indice,numReserva, flagConfirmacao;
+	texto destino;
+	real valorP, totalVendido;
+	// Instruções
+	indice = 0;
+	numReserva = 0;
+	totalVendido = 0;
+	qtdCliente = 1;
+	flagConfirmacao =0;
+	destino = leValidaDestino();
+	valorP = leValidaValor();
+	leValidaAssento(destino, lugares,assentos);
+	limpaTela();
+
+	escreval("_______________________________________________");
+	escreval("             SALUMAR LINHAS AEREAS             ");
+
+
+	deseja = desejaComprar(destino,  valorP);
+
+	se(deseja == 'S')entao
+		qtdPassageiros = leValidaQtdPassageiros(lugares);
+		qtdCliente = qtdPassageiros;	
+
+
+		faca
+			limpaTela();
+			escreval("_______________________________________________");
+			escreval("             SALUMAR LINHAS AEREAS             ");
+
+			comando = leValidaOpcao();	
+
+			i = menu( comando,  qtdPassageiros,  valorP,  destino, lugares, assentos, indice, numReserva, idades, codReserva, qtdCliente,totalVendido,flagConfirmacao);
+
+		enquanto(i != 1);
+		//senao
+		//	inteiroerrompa;
+	fimSe
+
+fimPrincipal
+
+funcao texto leValidaDestino()
+	texto destino;
+	faca
+		escreval("QUAL SERÁ O DESTINO? ");
+		leia(destino);
+		se(comparaTexto(destino,"")==0)entao
+			escreval("CAMPO OBRIGATÓRIO*");
+		fimSe
+	enquanto(comparaTexto(destino,"")==0);
+	retorna destino;
+
+fimFuncao
+
+funcao real leValidaValor()
+	real valorP;
+	faca
+		escreval("QUAL É O VALOR DA PASSAGEM? ");
+		leia(valorP);
+		se(valorP < 1)entao
+			escreval("ESTE VALOR É INVÁLseaca, TENTE NOVAMENTE!");
+		fimSe
+	enquanto(valorP < 1);
+	retorna valorP;
+fimFuncao
+
+
+procedimento leValidaAssento(texto destino, ref inteiro lugares,caracter assentos[])
+	inteiro i;
+	faca
+		escreval("QUAL É A QUANTIDADE DE ASSENTOS EXISTENTES PARA O VOO COM DESTINO A ",destino,"?");
+		leia(lugares);
+		se(lugares < 90 ou lugares > 200)entao
+			escreval("ESTE VALOR É INVÁLseaca, INSIRA NOVAMENTE!");
+		fimSe
+	enquanto(lugares < 90 ou lugares > 200);
+
+	para( i de 0 ate lugares-1  passo 1)faca
+		assentos[i] = 'D';
+	fimPara
+fimProcedimento			
+
+funcao caracter  desejaComprar(texto destino, real valorP)
+	caracter deseja;
+	faca
+		escreval("DESEJA COMPRAR UMA PASSAGEM COM DESTINO A ", destino, " POR ",valorP," REAIS? (S/N)");
+		leiaCaracter(deseja);
+
+		deseja = maiusculoCaracter(deseja);
+		se(deseja != 'S' e deseja != 'N')entao
+			escreval("OPÇÂO INVÀLIDA, TENTE NOVAMENTE!");
+		fimSe
+	enquanto(deseja != 'S' e deseja != 'N');
+	retorna deseja;
+fimFuncao
+
+funcao inteiro leValidaQtdPassageiros(inteiro lugares)
+	inteiro qtd;
+	faca
+		escreval("QUANTAS PASSAGENS O SENHOR(A) DESEJA? ");
+		leia(qtd);
+		se(qtd < 1 ou qtd > lugares)entao
+			escreval("QUANTIDADE INVÁLIDA.");
+		fimSe
+	enquanto(qtd < 1 ou qtd > lugares);
+	retorna qtd;
+fimFuncao
+
+funcao caracter leValidaOpcao()
+	caracter comando;
+	escreval("DIGITE:");
+	escreval("   V - VERIFICAR A OCUPAÇÃO DE VOO");
+	escreval("   R - EFETUAR UMA RESERVA");
+	escreval("   C - CANCELAR UMA RESERVA");
+	escreval("   E - EFETIVAR A CONFIRMAÇÃO DE VENDA DA RESERVA");
+	escreval("   M - MOSTRAR A SITUAÇÃO facaS ASSENTOS faca VOO");
+	escreval("   N - INSERIR UM NOVO CLIENTE");
+	escreval("   D - INSERIR UM NOVO DESTINO");
+	escreval("   F - FINALIZAR");
+	faca
+		leiaCaracter(comando);
+		comando = minusculoCaracter(comando);
+		se(comando != 'v' e comando != 'r' e comando != 'c' e comando != 'e' e comando != 'm' e comando != 'n' e comando != 'd' e comando != 'f')entao
+			escreval("OPÇÂO INVÀLIDA, TENTE NOVAMENTE!");
+		fimSe
+	enquanto(comando != 'v' e comando != 'r' e comando != 'c' e comando != 'e' e comando != 'm' e comando != 'n' e comando != 'd' e comando != 'f');
+	retorna comando;
+fimFuncao
+
+funcao inteiro menu(caracter comando, ref inteiro qtdPassageiros, real valorP, texto destino, ref inteiro lugares,caracter assentos[],ref inteiro indice,ref inteiro numReserva,inteiro idades[],inteiro codReserva[],ref inteiro qtdCliente,ref real totalVendido,ref inteiro flagConfirmacao)
+
+	caracter pause,deseja;
+
+	escolha(comando)
+
+	caso 'v'
+		verificaVoo(assentos, totalVendido,lugares);
+		retorna 0;
+	caso 'r'
+		limpaTela();
+		se(flagConfirmacao >= 1)entao
+			escreval("VOCÊ JÀ FEZ A RESERVA");
+			escreval("");
+			escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+			leiaCaracter(pause);
+			retorna 0;
+		fimSe	
+		reservar( qtdPassageiros, valorP, idades, assentos,  codReserva, lugares,  indice,  numReserva);
+		flagConfirmacao = 1;
+		retorna 0;
+	caso 'c'
+		limpaTela();
+		se(flagConfirmacao == 0)entao
+		escreval("VOCÊ DEVE FAZER UMA RESERVA PRIMEIRO!");
+		reservar( qtdPassageiros, valorP, idades, assentos,  codReserva, lugares,  indice,  numReserva);
+		senao
+			se(flagConfirmacao == 2)entao
+			escreval("VOCÊ JÀ FEZ A CONFIRMAÇÂO E NÂO PODE CANCELAR");
+			escreval("");
+			escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+			leiaCaracter(pause);
+			retorna 0;
+			fimSe
+		fimSe
+		cancelarReserva( qtdPassageiros,  valorP, idades, destino,  qtdCliente, codReserva, numReserva,assentos);
+		escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+		leiaCaracter(pause);
+		flagConfirmacao = 0;
+		retorna 0;
+	caso 'e'
+		limpaTela();
+		se(flagConfirmacao == 0)entao
+		escreval("VOCÊ DEVE FAZER UMA RESERVA PRIMEIRO!\n");
+		reservar( qtdPassageiros, valorP, idades, assentos,  codReserva, lugares,  indice,  numReserva);
+		senao
+			se(flagConfirmacao == 2)entao
+			escreval("VOCÊ JÀ FEZ A CONFIRMAÇÂO");
+			escreval("");
+			escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+			leiaCaracter(pause);
+			retorna 0;
+			fimSe
+		fimSe
+		confirmarReserva( qtdPassageiros,  valorP, idades, destino,  qtdCliente, codReserva, numReserva,assentos,totalVendido);
+		escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+		leiaCaracter(pause);
+		flagConfirmacao = 2;
+		retorna 0;
+	caso 'n'
+		limpaTela();
+		deseja = desejaComprar(destino,  valorP);
+		se(deseja == 'S')entao
+		qtdPassageiros = leValidaQtdPassageiros(lugares);
+		qtdCliente =  qtdCliente + qtdPassageiros;
+		flagConfirmacao = 0;
+		fimSe
+		retorna 0;
+	caso 'm'
+		limpaTela();
+		imprimeLugares(assentos, lugares);
+		escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+		leiaCaracter(pause);
+		retorna 0;
+	caso 'd'
+		limpaTela();
+		destino = leValidaDestino();
+		valorP = leValidaValor();
+		leValidaAssento(destino, lugares,assentos);
+		retorna 0;
+	caso 'f'
+		retorna 1;
+	fimEscolha
+fimFuncao	
+
+procedimento reservar(inteiro qtdPassagens,real valorP,inteiro idades[],caracter assentos[], inteiro codReserva[],inteiro lugares,ref inteiro indice,ref inteiro numReserva)
+	real total;
+	caracter pause;
+	inteiro i,j,x,y,z,flag;
+	flag = 1;
+
+	para(i de 0 ate qtdPassagens -1 passo 1)faca
+		idades[i] = leValidaIdade(i + 1);
+	fimPara
+	limpaTela();	
+
+	para(j de 0 ate qtdPassagens -1 passo 1)faca
+
+		imprimeLugares(assentos,lugares);
+		faca
+			faca
+
+				escreval("DIGITE O CÓDIGO FILEIRA ASSENTO QUE VOCÊ DESEJA  PASSAGEIRO(A) ",j+1);
+				leia(x);
+				escreval("DIGITE O CÓDIGO COLUNA ASSENTO QUE VOCÊ DESEJA  PASSAGEIRO(A)  ",j+1);
+				leia(y);
+				z = ((x)*9) + (y);
+				se(z > lugares ou z < 0)entao
+					escreval("ESTE ASSENTO NÃO EXISTE, INSIRA OUTRO!");
+				fimSe
+			enquanto(z > lugares ou z < 0);
+
+
+			se(assentos[z] != 'C' e assentos[z] != 'R')entao
+				flag = 0;
+				assentos[z] = 'R';
+				numReserva = numReserva + 1;
+				codReserva[indice] =  z;
+			senao
+				escreval("ASSENTO NÃO DISPONÍVEL, SELECIONE OUTRO!");
+			fimSe
+		enquanto(flag != 0);
+		limpaTela();
+		indice = indice + 1;
+		escreval("SEU CÓDIGO DE RESERVA É ",numReserva);
+		escreval("_______________________________________________");
+	fimPara
+	
+	total = calculaPassagem( valorP, idades,  qtdPassagens);
+	escreval("");
+	escreval("O VALOR DA(S) PASSAGEM(S) É ",total);
+	escreval("_______________________________________________");
+
+	escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+	leiaCaracter(pause);
+
+fimProcedimento
+
+procedimento imprimeLugares(caracter assentos[], inteiro lugares)
+
+	inteiro n, i, numLinhas ,j;
+	j = 9; numLinhas = 0;
+	//imprime o numero das colunas
+	escreval("   012345678");
+	//imprime o numero das linhas
+	escreva(numLinhas,"  ");
+
+	para(n de 0 ate  lugares -1 passo 1)faca
+		se(n == j)entao
+			numLinhas = numLinhas + 1;
+			escreval("");
+			escreva(numLinhas,"  ");
+			escreva(assentos[n]);
+			j = j + 9;
+		senao
+			escreva(assentos[n]);
+		fimSe
+	fimPara
+	escreval("");
+	escreval("");
+
+	escreval(" D - DISPONÍVEL ");
+	escreval(" R - RESERVADO ");
+	escreval(" C - CONFIRMADO");
+fimProcedimento	
+
+funcao real calculaPassagem(real valorP, inteiro idades[], inteiro qtdPassagens)
+	inteiro ih,contador;
+	real acumulador,total;
+	total = 0; contador = 0; acumulador =0;
+	para(ih de 0 ate qtdPassagens -1 passo 1)faca
+		se(idades[ih] <= 5)entao
+			contador = contador + 1;
+		fimSe
+	fimPara	
+
+	se(contador > 0)entao
+		qtdPassagens = qtdPassagens - contador;
+		acumulador = (valorP * 0.5) * contador;
+	fimSe
+	total =  acumulador + qtdPassagens * valorP;
+	retorna total;
+fimFuncao		
+
+funcao inteiro leValidaIdade(inteiro contador)
+	inteiro idade;
+	faca
+		escreval("QUAL É A IDADE DO PASSAGEIRO ",contador,"?");
+		leia(idade);
+
+		se(idade < 1 ou idade > 125)entao
+			escreval("ESTA IDADE É INVÁLIDO, TENTE NOVAMENTE!");
+		fimSe
+	enquanto(idade < 1 ou idade > 125);
+	retorna idade;
+fimFuncao
+
+procedimento cancelarReserva(inteiro qtdPassagens, inteiro valorP, inteiro idades[],texto destino, inteiro qtdCliente,inteiro codReserva[],inteiro numReserva,caracter assentos[])
+	
+	inteiro i, j, flag,cr;
+	caracter continuar,pause;
+	real total;
+	flag = 1;
+	total = calculaPassagem( valorP, idades,  qtdPassagens);
+	limpaTela();
+	faca
+	escreval("DESEJA CANCELAR UMA RESERVA DE ",qtdPassagens," PASSAGEM(NS) NO TOTAL DE R$ ",total," COM DESTINO A ",destino,"(S/N)?");
+	leiaCaracter(continuar);
+	continuar = maiusculoCaracter(continuar);
+	se(continuar != 'S' e continuar != 'N')entao
+		escreval("OPÇÃO INVÁLIDA, TENTE NOVAMENTE!");
+	fimSe
+	enquanto(continuar != 'S' e continuar != 'N');	
+	se(continuar == 'S')entao
+
+		para(j de 0 ate qtdPassagens -1 passo 1)faca
+		
+			faca
+				escreval("INFORME SEU CÓDIGO DE RESERVA DO PASSAGEIRO ", j + 1);
+				leia(cr);
+				se(cr > qtdCliente ou cr < 1)entao
+					escreval("CÓDIGO NÃO ENCONTRADO, INSIRA OUTRO!");
+				fimSe
+			enquanto(cr > qtdCliente ou cr < 1);
+			cr = cr - 1;
+			i = codReserva[cr];
+
+			assentos[i] = 'D';
+			numReserva = numReserva - qtdPassagens;
+			limpaTela();
+			escreval("RESERVA CANCELADA COM SUCESSO.");
+			escreval("");
+			escreval("");
+		fimPara
+		escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+		leiaCaracter(pause);
+	senao
+		interrompa;
+	fimSe
+fimProcedimento
+
+
+procedimento confirmarReserva(inteiro qtdPassagens, inteiro valorP, inteiro idades[],texto destino, inteiro qtdCliente,inteiro codReserva[],inteiro numReserva,caracter assentos[],ref real totalVendido)
+	
+	inteiro i, j, flag,cr;
+	caracter continuar,pause;
+	real total;
+	flag = 1;
+	total = calculaPassagem( valorP, idades,  qtdPassagens);
+	limpaTela();
+	faca
+	escreval("DESEJA CONFIRMAR UMA RESERVA DE ",qtdPassagens," PASSAGEM(NS) NO TOTAL DE R$ ",total," COM DESTINO A ",destino,"(S/N)?");
+	leiaCaracter(continuar);
+	continuar = maiusculoCaracter(continuar);
+	se(continuar != 'S' e continuar != 'N')entao
+		escreval("OPÇÃO INVÁLIDA, TENTE NOVAMENTE!");
+	fimSe
+	enquanto(continuar != 'S' e continuar != 'N');	
+	se(continuar == 'S')entao
+		totalVendido = totalVendido + total;
+		para(j de 0 ate qtdPassagens -1 passo 1)faca
+		
+			faca
+				escreval("INFORME SEU CÓDIGO DE RESERVA DO PASSAGEIRO ", j + 1);
+				leia(cr);
+				se(cr > qtdCliente ou cr < 1)entao
+					escreval("CÓDIGO NÃO ENCONTRADO, INSIRA OUTRO!");
+				fimSe
+			enquanto(cr > qtdCliente ou cr < 1);
+			cr = cr - 1;
+			i = codReserva[cr];
+
+			assentos[i] = 'C';
+			numReserva = numReserva - qtdPassagens;
+			limpaTela();
+			escreval("RESERVA CONFIRMADA COM SUCESSO.");
+			escreval("");
+			escreval("");
+		fimPara
+		escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+		leiaCaracter(pause);
+	senao
+		interrompa;
+	fimSe
+fimProcedimento
+
+procedimento verificaVoo(caracter assentos[],real totalVendido,inteiro lugares)
+	inteiro disponivel, reservado, confirmado, i;
+	caracter pause;
+	disponivel = 0; reservado = 0; confirmado = 0;
+	
+	
+	
+	para( i de 0 ate lugares-1 passo 1)faca
+		
+			se(assentos[i] == 'D')entao
+				disponivel = disponivel + 1;
+			senao	
+				se(assentos[i] == 'R')entao
+				reservado = reservado +  1;
+				senao
+					confirmado = confirmado + 1;	 		
+				fimSe
+			fimSe
+	fimPara			
+	limpaTela();
+	escreval("SITUAÇÂO DO VÔO");
+	escreval("");
+	escreval("nASSENTOS DISPONÍVEIS: ",disponivel);
+	escreval("ASSENTOS RESERVADOS: ",reservado);
+	escreval("ASSENTOS CONFIRMADOS: ",confirmado);
+	
+	escreval("TOTAL EM REAIS DE VENDAS CONFIRMADAS: R$ ",totalVendido);
+		escreval("");
+		escreval("");
+		escreval("DIGITE QUALQUER TECLA PARA CONTINUAR ...");
+		leiaCaracter(pause);
+fimProcedimento
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
